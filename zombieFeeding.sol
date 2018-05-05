@@ -32,6 +32,7 @@ contract ZombieFeeding is ZombieFactory {
     }
 
     function feedAndMultiply(uint _zombieId, uint _targetDna, string _species) internal {
+        require(msg.sender == zombieToOwner[_zombieId]);
         Zombie storage myZombie = zombies[_zombieId];
         require(_isReady(myZombie));
         uint newTargetDna = _targetDna % dnaModulus;
@@ -44,6 +45,7 @@ contract ZombieFeeding is ZombieFactory {
     }
 
     function feedOnKitty(uint _zombieId, uint _kittyId) public {
+        require(msg.sender == zombieToOwner[_zombieId]);
         uint kittyDna;
         (,,,,,,,,,kittyDna) = kittyContract.getKitty(_kittyId);
         feedAndMultiply(_zombieId, kittyDna, "kitty");
