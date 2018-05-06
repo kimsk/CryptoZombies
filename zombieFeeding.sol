@@ -19,7 +19,7 @@ contract KittyInterface {
 contract ZombieFeeding is ZombieFactory {
     KittyInterface kittyContract;
 
-    modifier ownerOf(uint _zombieId) {
+    modifier onlyOwnerOf(uint _zombieId) {
         require(msg.sender == zombieToOwner[_zombieId]);
         _;
     }
@@ -36,7 +36,7 @@ contract ZombieFeeding is ZombieFactory {
         return (_zombie.readyTime <= now);
     }
 
-    function feedAndMultiply(uint _zombieId, uint _targetDna, string _species) internal ownerOf(_zombieId) {
+    function feedAndMultiply(uint _zombieId, uint _targetDna, string _species) internal onlyOwnerOf(_zombieId) {
         Zombie storage myZombie = zombies[_zombieId];
         require(_isReady(myZombie));
         uint newTargetDna = _targetDna % dnaModulus;
@@ -48,7 +48,7 @@ contract ZombieFeeding is ZombieFactory {
         _triggerCooldown(myZombie);
     }
 
-    function feedOnKitty(uint _zombieId, uint _kittyId) public ownerOf(_zombieId) {
+    function feedOnKitty(uint _zombieId, uint _kittyId) public onlyOwnerOf(_zombieId) {
         uint kittyDna;
         (,,,,,,,,,kittyDna) = kittyContract.getKitty(_kittyId);
         feedAndMultiply(_zombieId, kittyDna, "kitty");
